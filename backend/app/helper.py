@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 from app.config.settings import settings
+
 # Secret key to encode and decode JWT tokens
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM
