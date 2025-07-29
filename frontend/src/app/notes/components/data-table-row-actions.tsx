@@ -43,6 +43,7 @@ export function DataTableRowActions<TData>({
   const label = (row.original as any).label ?? "";
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
+
   return (
     <>
       <DropdownMenu>
@@ -110,9 +111,6 @@ export function DataTableRowActions<TData>({
         note={row.original as Note}
         isOpen={isShareDialogOpen}
         onClose={() => setIsShareDialogOpen(false)}
-        emailInput={""}
-        setEmailInput={() => {}}
-        handleShareWithUser={() => {}}
         handleRemoveSharedUser={() => {}}
         handleCopyPublicLink={() => {}}
         handleRevokePublicLink={() => {}}

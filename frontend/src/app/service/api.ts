@@ -1,4 +1,4 @@
-import { DataResponse, LoginCredentials,Note,RegisterData, TokenData } from "@/app/types";
+import { DataResponse, LoginCredentials,Note,RegisterData, ShareNoteRequest, TokenData } from "@/app/types";
 
 const SERVER_URL = "http://localhost:8000/api"; // static base URL for the server API
 
@@ -131,4 +131,23 @@ export async function deleteNote(id: number) {
   });
 
   return response.ok;
+}
+export async function shareNote(data: ShareNoteRequest) {
+  const token = getToken();
+  if (!token) return false;
+
+  const response = await fetch(`${SERVER_URL}/notes/share`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    return false;
+  }
+
+  return true;
 }
