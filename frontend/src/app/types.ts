@@ -11,3 +11,12 @@ export interface RegisterData {
     last_name: string;
     confirm_password:string
 }
+export interface Note {
+  id: string
+  title: string
+  content: string
+  createdAt: Date
+  modifiedAt: Date
+  tags?: string[]
+  visibility: "private" | "shared" | "public"
+}
