@@ -3,12 +3,13 @@ from fastapi import APIRouter
 from app.routers.auth import router as UserRouter
 from app.routers.note import router as NoteRouter
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import add_pagination
 
 app = FastAPI(
     title="Notes Management API",
     version="1.0.0")
 
-
+add_pagination(app)
 origins = [
     "http://localhost:3000",
 ]
