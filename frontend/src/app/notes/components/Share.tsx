@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,14 +20,14 @@ import {
   Link as LinkIcon,
 } from "lucide-react";
 import { Note } from "@/app/types";
+import { toast } from "sonner";
+import { shareNote } from "@/app/service/api";
+import { useState } from "react";
 
 interface ShareNoteProps {
   note: Note;
   isOpen: boolean;
   onClose: () => void;
-  emailInput: string;
-  setEmailInput: (email: string) => void;
-  handleShareWithUser: () => void;
   handleRemoveSharedUser: (userId: string) => void;
   handleCopyPublicLink: () => void;
   handleRevokePublicLink: () => void;
@@ -33,9 +39,7 @@ export default function ShareNote({
   note,
   isOpen,
   onClose,
-  emailInput,
-  setEmailInput,
-  handleShareWithUser,
+
   handleRemoveSharedUser,
   handleCopyPublicLink,
   handleRevokePublicLink,
@@ -43,7 +47,29 @@ export default function ShareNote({
   isGeneratingLink,
 }: ShareNoteProps) {
     
-    return (
+  const [emailInput, setEmailInput] = useState("");
+
+  const handleShareWithUser = () => {
+    if (!emailInput.trim()) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+
+    shareNote({ note_id: note.id, shared_with_user_email: emailInput.trim() })
+      .then((success) => {
+        if (success) {
+          toast.success("Note shared successfully!");
+          setEmailInput("");
+        } else {
+          toast.error("Failed to share the note.");
+        }
+      })
+      .catch(() => {
+        toast.error("An error occurred while sharing the note.");
+      });
+  };
+
+  return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -58,7 +84,9 @@ export default function ShareNote({
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Mail className="w-5 h-5 text-blue-500" />
-              <h3 className="text-lg font-medium">Partager avec des utilisateurs</h3>
+              <h3 className="text-lg font-medium">
+                Partager avec des utilisateurs
+              </h3>
             </div>
 
             <div className="flex gap-2">
@@ -67,7 +95,6 @@ export default function ShareNote({
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
                 placeholder="Entrez une adresse email"
-                onKeyPress={(e) => e.key === "Enter" && handleShareWithUser()}
               />
               <Button
                 onClick={handleShareWithUser}
@@ -119,7 +146,8 @@ export default function ShareNote({
             </div>
 
             <p className="text-sm text-muted-foreground">
-              Créez un lien public pour permettre à quiconque ayant le lien de consulter cette note.
+              Créez un lien public pour permettre à quiconque ayant le lien de
+              consulter cette note.
             </p>
 
             {note.publicUrl ? (
@@ -140,7 +168,10 @@ export default function ShareNote({
                     readOnly
                     className="flex-1"
                   />
-                  <Button onClick={handleCopyPublicLink} className="flex items-center gap-2">
+                  <Button
+                    onClick={handleCopyPublicLink}
+                    className="flex items-center gap-2"
+                  >
                     <Copy className="w-4 h-4" />
                     Copier
                   </Button>
@@ -174,10 +205,15 @@ export default function ShareNote({
                 À propos des permissions
               </h4>
               <ul className="text-sm text-blue-800 space-y-1">
-                <li>• Les utilisateurs partagés peuvent uniquement consulter la note</li>
+                <li>
+                  • Les utilisateurs partagés peuvent uniquement consulter la
+                  note
+                </li>
                 <li>• Les liens publics permettent l'accès en lecture seule</li>
                 <li>• Vous pouvez révoquer l'accès à tout moment</li>
-                <li>• Les modifications ne sont visibles qu'après sauvegarde</li>
+                <li>
+                  • Les modifications ne sont visibles qu'après sauvegarde
+                </li>
               </ul>
             </CardContent>
           </Card>

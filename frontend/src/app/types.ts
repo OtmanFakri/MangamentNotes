@@ -37,3 +37,7 @@ export interface TokenData {
   user_id: number | string;
   token_type: string;
 }
+export interface ShareNoteRequest {
+  note_id: string;
+  shared_with_user_email: string;
+}
