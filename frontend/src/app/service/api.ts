@@ -1,4 +1,4 @@
-import { LoginCredentials,RegisterData, TokenData } from "@/app/types";
+import { DataResponse, LoginCredentials,Note,RegisterData, TokenData } from "@/app/types";
 
 const SERVER_URL = "http://localhost:8000/api"; // static base URL for the server API
 
@@ -68,3 +68,12 @@ export async function checkToken() {
     return response.ok;
 }
 
+export async function getNotes() {
+    const token = getToken();
+    if (!token) return false;
+  const response = await fetch(`${SERVER_URL}/notes/`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data: DataResponse<Note> = await response.json();
+  return data.items;
+}
