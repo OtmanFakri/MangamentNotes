@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import { Note } from "@/app/types";
 import { toast } from "sonner";
-import { shareNote } from "@/app/service/api";
+import { generatePublicLink, shareNote } from "@/app/service/api";
 import { useState } from "react";
 
 interface ShareNoteProps {
@@ -31,8 +31,6 @@ interface ShareNoteProps {
   handleRemoveSharedUser: (userId: string) => void;
   handleCopyPublicLink: () => void;
   handleRevokePublicLink: () => void;
-  handleGeneratePublicLink: () => void;
-  isGeneratingLink: boolean;
 }
 
 export default function ShareNote({
@@ -43,11 +41,10 @@ export default function ShareNote({
   handleRemoveSharedUser,
   handleCopyPublicLink,
   handleRevokePublicLink,
-  handleGeneratePublicLink,
-  isGeneratingLink,
 }: ShareNoteProps) {
     
   const [emailInput, setEmailInput] = useState("");
+  const [isGeneratingLink, setIsGeneratingLink] = useState(false);
 
   const handleShareWithUser = () => {
     if (!emailInput.trim()) {
@@ -67,6 +64,22 @@ export default function ShareNote({
       .catch(() => {
         toast.error("An error occurred while sharing the note.");
       });
+  };
+
+   const handleGeneratePublicLink = async () => {
+    setIsGeneratingLink(true);
+    try {
+      const result = await generatePublicLink({ note_id: note.id });
+      if (result && result.publicUrl) {
+        toast.success("Public link generated!");
+      } else {
+        toast.error("Failed to generate public link.");
+      }
+    } catch {
+      toast.error("An error occurred while generating the public link.");
+    } finally {
+      setIsGeneratingLink(false);
+    }
   };
 
   return (
@@ -107,32 +120,29 @@ export default function ShareNote({
             {/* Liste des utilisateurs avec qui la note est partagée */}
             {note.sharedWith && note.sharedWith.length > 0 && (
               <div className="space-y-2">
-                <Label className="text-sm font-medium">Partagé avec :</Label>
-                {note.sharedWith.map((user) => (
-                  <Card key={user.id}>
-                    <CardContent className="flex items-center justify-between p-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                          <Mail className="w-4 h-4 text-blue-600" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium">{user.email}</p>
-                          <p className="text-xs text-muted-foreground">
-                            Lecture seule • Partagé le{" "}
-                            {user.sharedAt.toLocaleDateString("fr-FR")}
-                          </p>
-                        </div>
+                <h4 className="text-sm font-medium text-gray-700">Partagé avec :</h4>
+                {note.sharedWith.map(user => (
+                  <div key={user.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                        <Mail className="w-4 h-4 text-blue-600" />
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveSharedUser(user.id)}
-                        title="Révoquer l'accès"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </Button>
-                    </CardContent>
-                  </Card>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{user.email}</p>
+                        <p className="text-xs text-gray-500">
+                          Lecture seule • Partagé le   {user.shared_at && new Date(user.shared_at).toLocaleDateString("fr-FR")}
+
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveSharedUser(user.id)}
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Révoquer l'accès"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
@@ -152,8 +162,8 @@ export default function ShareNote({
 
             {note.publicUrl ? (
               <div className="space-y-3">
-                <Card className="bg-green-50 border-green-200">
-                  <CardContent className="flex items-center gap-2 p-3">
+                <Card  className="bg-green-50 border-green-200">
+                  <CardContent className="flex items-center gap-1">
                     <Check className="w-5 h-5 text-green-600" />
                     <span className="text-sm font-medium text-green-800">
                       Lien public actif
@@ -168,13 +178,6 @@ export default function ShareNote({
                     readOnly
                     className="flex-1"
                   />
-                  <Button
-                    onClick={handleCopyPublicLink}
-                    className="flex items-center gap-2"
-                  >
-                    <Copy className="w-4 h-4" />
-                    Copier
-                  </Button>
                 </div>
 
                 <Button
@@ -197,7 +200,7 @@ export default function ShareNote({
               </Button>
             )}
           </div>
-
+           
           {/* Informations sur les permissions */}
           <Card className="bg-blue-50 border-blue-200">
             <CardContent className="p-4">

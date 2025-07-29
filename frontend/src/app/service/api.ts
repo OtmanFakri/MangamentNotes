@@ -1,4 +1,4 @@
-import { DataResponse, LoginCredentials,Note,RegisterData, ShareNoteRequest, TokenData } from "@/app/types";
+import { DataResponse, LoginCredentials,Note,PublicLinkRequest,RegisterData, ShareNoteRequest, TokenData } from "@/app/types";
 
 const SERVER_URL = "http://localhost:8000/api"; // static base URL for the server API
 
@@ -150,4 +150,24 @@ export async function shareNote(data: ShareNoteRequest) {
   }
 
   return true;
+}
+export async function generatePublicLink(data: PublicLinkRequest) {
+  const token = getToken();
+  if (!token) return false;
+
+  const response = await fetch(`${SERVER_URL}/notes/public-link`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    return false;
+  }
+
+  const result = await response.json();
+  return result; // assuming it returns the public URL or related info
 }

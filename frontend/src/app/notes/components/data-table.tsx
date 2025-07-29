@@ -43,7 +43,7 @@ export function DataTable<TData, TValue>({
       id: true,
       title: true,
       content: true,
-      createdAt: true,
+      created_at: true,
       modifiedAt: true,
       is_public:true,
       tags: false, // hide tags column by default
@@ -53,7 +53,7 @@ export function DataTable<TData, TValue>({
   );
   const [sorting, setSorting] = React.useState<SortingState>([
     {
-      id: "createdAt",
+      id: "created_at",
       desc: true,
     },
   ]);

@@ -18,7 +18,12 @@ export interface DataResponse<T> {
     size:  number;
     pages: number;
 }
-
+export interface SharedUser {
+  id: string;
+  email: string;
+  permission: 'read'
+  shared_at: Date;
+}
 
 export interface Note {
   id: string
@@ -28,6 +33,9 @@ export interface Note {
   updated_at?: Date
   tags?: string[]
   visibility: string
+  shareToken?: string;
+  sharedWith?: SharedUser[];
+  publicUrl?: string;
 }
 
 export interface TokenData {
@@ -40,4 +48,7 @@ export interface TokenData {
 export interface ShareNoteRequest {
   note_id: string;
   shared_with_user_email: string;
+}
+export interface PublicLinkRequest {
+  note_id: String;
 }

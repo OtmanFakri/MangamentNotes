@@ -114,8 +114,6 @@ export function DataTableRowActions<TData>({
         handleRemoveSharedUser={() => {}}
         handleCopyPublicLink={() => {}}
         handleRevokePublicLink={() => {}}
-        handleGeneratePublicLink={() => {}}
-        isGeneratingLink={false}
       />
     </>
   );
