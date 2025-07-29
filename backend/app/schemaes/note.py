@@ -4,6 +4,13 @@ from typing import Any, List, Optional
 import uuid
 
 
+class SharedUser(BaseModel):
+    id: int
+    email: str
+    first_name: Optional[str]
+    last_name: Optional[str]
+    shared_at: Optional[datetime]
+    
 class TagOut(BaseModel):
     id: int
     tag_name: str
@@ -25,6 +32,9 @@ class NoteOut(BaseModel):
     created_at: datetime
     updated_at: datetime
     tags: List[str]
+    shareToken: Optional[str] = None  # Added optional shareToken
+    sharedWith: Optional[List[SharedUser]] = None
+    publicUrl: Optional[str] = None  # Added optional publicUrl
 
     class Config:
         orm_mode = True

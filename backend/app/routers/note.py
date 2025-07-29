@@ -124,11 +124,24 @@ def list_notes(
     )
     params = Params(page=page, size=size)
 
-    return paginate(
-        stmt,
-        params=params,
-        transformer=lambda items: [
-            NoteOut(
+    def transform(items):
+        result = []
+        for n in items:
+            shared_with = [
+                {
+                    "id": s.shared_with_user.id,
+                    "email": s.shared_with_user.email,
+                    "first_name": s.shared_with_user.first_name,
+                    "last_name": s.shared_with_user.last_name,
+                    "shared_at" : s.shared_at
+                }
+                for s in n.shared_entries
+            ]
+            public_url = None
+            if n.public_token:
+                public_url = f"http://127.0.0.1:8000/api/notes/public/{n.public_token}"
+
+            note_out = NoteOut(
                 id=n.id,
                 title=n.title,
                 content=n.content,
@@ -136,11 +149,18 @@ def list_notes(
                 created_at=n.created_at,
                 updated_at=n.updated_at,
                 tags=[t.tag_name for t in n.tags],
+                shareToken=n.public_token,
+                sharedWith=shared_with if shared_with else None,
+                publicUrl=public_url,
             )
-            for n in items
-        ]
-    )
+            result.append(note_out)
+        return result
 
+    return paginate(
+        stmt,
+        params=params,
+        transformer=transform
+    )
 
 @router.delete("/{note_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_note(
