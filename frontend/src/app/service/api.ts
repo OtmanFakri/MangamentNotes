@@ -77,3 +77,58 @@ export async function getNotes() {
   const data: DataResponse<Note> = await response.json();
   return data.items;
 }
+
+export async function createNote(title: string, content: string, tag_names: string[]) {
+    const token = getToken();
+    if (!token) return false;
+
+    const response = await fetch(`${SERVER_URL}/notes/`, {
+        method: "POST",
+        headers: { 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ title, content, tag_names }),
+    });
+
+    if (!response.ok) {
+        return false;
+    }
+
+    const data: Note = await response.json();
+    return data;
+}
+export async function updateNote(id: string, title: string, content: string, tag_names: string[]) {
+  const token = getToken();
+  if (!token) return false;
+
+  const response = await fetch(`${SERVER_URL}/notes/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({ title, content, tag_names }),
+  });
+
+  if (!response.ok) {
+    return false;
+  }
+
+  const data: Note = await response.json();
+  return data;
+}
+
+export async function deleteNote(id: number) {
+  const token = getToken();
+  if (!token) return false;
+
+  const response = await fetch(`${SERVER_URL}/notes/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`
+    },
+  });
+
+  return response.ok;
+}

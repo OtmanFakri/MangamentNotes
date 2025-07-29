@@ -7,6 +7,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { createNote, updateNote } from "@/app/service/api";
+import { toast } from "sonner";
 
 interface NoteFormProps {
   note?: Note;
@@ -21,16 +23,33 @@ export function NoteForm({ note, open, onSave, onCancel }: NoteFormProps) {
   const [tags, setTags] = React.useState(note?.tags?.join(', ') || '');
   const [visibility, setVisibility] = React.useState<Note['visibility']>(note?.visibility || 'private');
 
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({
-      title,
-      content,
-      tags: tags.split(',').map(t => t.trim()).filter(t => t),
-      visibility,
-    });
-  };
+    const tagNames = tags.split(',').map(t => t.trim()).filter(t => t);
 
+    const action = note
+      ? updateNote(note.id, title, content, tagNames)
+      : createNote(title, content, tagNames);
+
+    action
+      .then(result => {
+        if (result) {
+          toast.success(`Note ${note ? 'updated' : 'saved'} successfully!`);
+          onSave({
+            title: result.title,
+            content: result.content,
+            tags: result.tags,
+            visibility: result.visibility,
+          });
+        } else {
+          toast.error(`Failed to ${note ? 'update' : 'save'} the note.`);
+        }
+      })
+      .catch(() => {
+        toast.error(`An error occurred while ${note ? 'updating' : 'saving'} the note.`);
+      });
+  };
   return (
     <Dialog open={open} onOpenChange={onCancel}>
         <DialogContent className="max-w-2xl">
@@ -75,20 +94,6 @@ export function NoteForm({ note, open, onSave, onCancel }: NoteFormProps) {
                 <p className="text-sm text-muted-foreground">
                 Separate tags with commas
                 </p>
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="visibility">Visibility</Label>
-                <Select value={visibility} onValueChange={(value: Note['visibility']) => setVisibility(value)}>
-                <SelectTrigger>
-                    <SelectValue placeholder="Select visibility" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="private">🔒 Private</SelectItem>
-                    <SelectItem value="shared">👥 Shared</SelectItem>
-                    <SelectItem value="public">🌍 Public</SelectItem>
-                </SelectContent>
-                </Select>
             </div>
                <DialogFooter>
             <Button type="button" variant="outline" onClick={onCancel}>
