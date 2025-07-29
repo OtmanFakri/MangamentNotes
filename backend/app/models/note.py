@@ -32,9 +32,16 @@ class Note(Base):
     )
     title: Mapped[str] = mapped_column(String(255))
     content: Mapped[Optional[str]] = mapped_column(Text)
+    
     is_public: Mapped[bool] = mapped_column(
         Boolean,
         server_default="0",
+    )
+    public_token: Mapped[Optional[str]] = mapped_column(
+        String(64),
+        unique=True,
+        index=True,
+        nullable=True
     )
     created_at: Mapped[datetime] = mapped_column(
         TIMESTAMP,
