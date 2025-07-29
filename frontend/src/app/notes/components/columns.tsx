@@ -5,10 +5,10 @@ import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 
-import { tags, visibilityStatuses } from "@/lib/utils"
-import { Note } from "@/lib/utils"
+import { visibilityStatuses } from "@/lib/utils"
 import { DataTableColumnHeader } from "./data-table-column-header"
 import { DataTableRowActions } from "./data-table-row-actions"
+import { Note } from "@/app/types"
 
 export const columns: ColumnDef<Note>[] = [
   {
@@ -91,12 +91,12 @@ export const columns: ColumnDef<Note>[] = [
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "created_at",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Créé le" />
     ),
     cell: ({ row }) => {
-      const createdAt = row.getValue("createdAt") as Date
+      const createdAt = row.getValue("created_at") as Date
 
       return (
         <div className="flex items-center gap-2">

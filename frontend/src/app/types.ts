@@ -11,15 +11,25 @@ export interface RegisterData {
     last_name: string;
     confirm_password:string
 }
+export interface DataResponse<T> {
+    items: T[];
+    total: number;
+    page:  number;
+    size:  number;
+    pages: number;
+}
+
+
 export interface Note {
   id: string
   title: string
   content: string
-  createdAt: Date
-  modifiedAt: Date
+  created_at: Date
+  updated_at: Date
   tags?: string[]
-  visibility: "private" | "shared" | "public"
+  visibility: string
 }
+
 export interface TokenData {
   access_token: string;
   full_name: string;

@@ -41,63 +41,7 @@ export const visibilityStatuses = [
   },
 ]
 
-// Sample tags (you can customize these)
-export const tags = [
-  {
-    value: "work",
-    label: "Travail",
-  },
-  {
-    value: "personal",
-    label: "Personnel",
-  },
-  {
-    value: "project",
-    label: "Projet",
-  },
-  {
-    value: "idea",
-    label: "Idée",
-  },
-  {
-    value: "todo",
-    label: "À faire",
-  },
-  {
-    value: "meeting",
-    label: "Réunion",
-  },
-]
 
-export const noteSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  content: z.string(),
-  createdAt: z.date(),
-  modifiedAt: z.date(),
-  tags: z.array(z.string()).optional(),
-  visibility: z.enum(["private", "shared", "public"]),
-})
-
-export type Note = z.infer<typeof noteSchema>
-
-
-
-
-export const labels = [
-  {
-    value: "bug",
-    label: "Bug",
-  },
-  {
-    value: "feature",
-    label: "Feature",
-  },
-  {
-    value: "documentation",
-    label: "Documentation",
-  },
-]
 
 export const statuses = [
   {
