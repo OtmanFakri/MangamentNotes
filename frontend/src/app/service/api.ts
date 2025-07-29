@@ -1,4 +1,4 @@
-import { LoginCredentials,RegisterData } from "@/app/types";
+import { LoginCredentials,RegisterData, TokenData } from "@/app/types";
 
 const SERVER_URL = "http://localhost:8000/api"; // static base URL for the server API
 
@@ -10,12 +10,14 @@ export function getToken() {
     return localStorage.getItem("access_token");
 }
 
-export function setToken(token: string) {
-    localStorage.setItem("access_token", token);
+export function setToken(data: TokenData) {
+  localStorage.setItem("access_token", data.access_token);
+  localStorage.setItem("full_name", data.full_name);
+  localStorage.setItem("email", data.email);
+  localStorage.setItem("user_id", data.user_id.toString());
+  localStorage.setItem("token_type", data.token_type);
 }
 
-
-// Auth service functions
 export async function login(credentials: LoginCredentials) {
     const response = await fetch(`${SERVER_URL}/auth/login`, {
         method: "POST",
@@ -25,9 +27,13 @@ export async function login(credentials: LoginCredentials) {
     const data =  await response.json();
 
     if (data.access_token) {
-       setToken(data.access_token)
+       setToken(data)
     }
     return data
+}
+
+export function clearToken() {
+  localStorage.clear();
 }
 
 export async function register(data:RegisterData) {

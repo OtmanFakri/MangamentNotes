@@ -20,3 +20,10 @@ export interface Note {
   tags?: string[]
   visibility: "private" | "shared" | "public"
 }
+export interface TokenData {
+  access_token: string;
+  full_name: string;
+  email: string;
+  user_id: number | string;
+  token_type: string;
+}
