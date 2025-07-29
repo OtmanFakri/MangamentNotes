@@ -27,6 +27,7 @@ import {
 
 import { DataTablePagination } from "./data-table-pagination"
 import { DataTableToolbar } from "./data-table-toolbar"
+import { title } from "process"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -37,21 +38,24 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-
-
-  console.log("columns:", columns)
-  console.log("data:", data)
-
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({
+        id: true,
+  title: true,
+  content: true,
+  createdAt: true,
+  modifiedAt: true,
+  visibility: true,
+  tags: false, // hide tags column by default
+    })
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
   const [sorting, setSorting] = React.useState<SortingState>([
     {
       id: "createdAt",
-      desc: true, // Most recent notes first by default
+      desc: true, 
     }
   ])
 
@@ -67,7 +71,7 @@ export function DataTable<TData, TValue>({
     initialState: {
       pagination: {
         pageSize: 20, 
-      },
+      }
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,

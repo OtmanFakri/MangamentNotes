@@ -10,6 +10,9 @@ import { columns } from "./components/columns"
 import { Note } from "@/lib/utils"
 
 const Page =  async () => {
+
+  const[isopen,setIsOpen] = useState(false)
+
   const notes: Note[] = [
   {
     "id": "NOTE-8782",
@@ -66,6 +69,11 @@ const Page =  async () => {
     "visibility": "shared"
   }
 ]
+  // function create new note
+  const createNewNote = (note) => {
+    notes.push(note)
+  }
+
   return (
     <>
       <div className="md:hidden">
@@ -89,11 +97,11 @@ const Page =  async () => {
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
             <p className="text-muted-foreground">
-              Here&apos;s a list of your tasks for this month!
+              Here&apos;s a list of your Notes for this month!
             </p>
           </div>
           <div className="flex items-center space-x-2">
-            <UserNav />
+            <UserNav/>
           </div>
         </div>
         <DataTable data={notes} columns={columns} />

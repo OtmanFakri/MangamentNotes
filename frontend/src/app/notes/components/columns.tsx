@@ -111,9 +111,34 @@ export const columns: ColumnDef<Note>[] = [
       const filterDate = new Date(value)
       return date >= filterDate
     },
+    meta: {
+      filterType: "date",
+      
+    },
   },
+{
+  accessorKey: "tags",
+  cell: ({ row }) => {
+    const tags = row.getValue("tags") as string[] | undefined
+
+    return (
+      <div className="flex flex-wrap gap-1">
+        {tags?.map((tag) => (
+          <Badge key={tag} variant="outline">
+            {tag}
+          </Badge>
+        ))}
+      </div>
+    )
+  },
+  filterFn: (row, id, value) => {
+    const tags = row.getValue(id) as string[]
+    return tags.some((tag) => value.includes(tag))
+  },
+  enableHiding: true,
+},
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,
-  },
+  }
 ]

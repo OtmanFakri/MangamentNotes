@@ -9,6 +9,8 @@ import { DataTableViewOptions } from "./data-table-view-options"
 
 import { priorities, statuses } from "@/lib/utils"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
+import { use, useEffect, useState } from "react"
+import { NoteForm } from "./NoteFrom"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -16,8 +18,10 @@ interface DataTableToolbarProps<TData> {
 
 export function DataTableToolbar<TData>({
   table,
+
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <div className="flex items-center justify-between">
@@ -30,17 +34,17 @@ export function DataTableToolbar<TData>({
           }
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn("status") && (
+        {table.getColumn("visibility") && (
           <DataTableFacetedFilter
-            column={table.getColumn("status")}
-            title="Status"
+            column={table.getColumn("visibility")}
+            title="visibility"
             options={statuses}
           />
         )}
-        {table.getColumn("priority") && (
+        {table.getColumn("tags") && (
           <DataTableFacetedFilter
-            column={table.getColumn("priority")}
-            title="Priority"
+            column={table.getColumn("tags")}
+            title="tags"
             options={priorities}
           />
         )}
@@ -57,8 +61,18 @@ export function DataTableToolbar<TData>({
       </div>
       <div className="flex items-center gap-2">
         <DataTableViewOptions table={table} />
-        <Button size="sm">Add Task</Button>
+        <Button
+        onClick={() => setIsDialogOpen(true)}
+        size="sm">Add Note</Button>
       </div>
+      <NoteForm
+        open={isDialogOpen}
+        onSave={(data) => {
+          console.log('Saving note:', data);
+          setIsDialogOpen(false);
+        }}
+        onCancel={() => setIsDialogOpen(false)}
+      />
     </div>
   )
 }
